@@ -2,9 +2,9 @@ package co.axelrod.lmax.event;
 
 import com.lmax.disruptor.EventFactory;
 
-public class LongEventFactory implements EventFactory<LongEvent> {
+public class LongEventFactory implements EventFactory<PriceEvent> {
     @Override
-    public LongEvent newInstance() {
-        return new LongEvent();
+    public PriceEvent newInstance() {
+        return new PriceEvent();
     }
 }
