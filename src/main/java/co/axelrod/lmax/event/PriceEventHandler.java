@@ -15,5 +15,6 @@ public class PriceEventHandler implements EventHandler<PriceEvent> {
 
 //        ByteBuffer copy = event.getValue().duplicate();
 //        log.info("Event handled: {}", StandardCharsets.UTF_8.decode(copy));
+//        System.out.println("Event handled: " + StandardCharsets.UTF_8.decode(copy));
     }
 }

@@ -25,6 +25,8 @@
             <artifactId>jetty-websocket-jetty-client</artifactId>
             <version>12.0.19</version>
         </dependency>
+
+        <!-- To be replaced with Chronicle Logger/Log4j2 with AsyncLogger (Disruptor-based) -->
 <!--        <dependency>-->
 <!--            <groupId>org.slf4j</groupId>-->
 <!--            <artifactId>slf4j-api</artifactId>-->

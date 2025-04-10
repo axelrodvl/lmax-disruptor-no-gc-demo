@@ -1,10 +1,12 @@
 package co.axelrod.lmax;
 
-import co.axelrod.lmax.client.BinanceWebsocketClient;
+import co.axelrod.lmax.jetty.WebSocketSessionListener;
+import co.axelrod.lmax.config.Configuration;
 import co.axelrod.lmax.event.PriceEvent;
 import co.axelrod.lmax.event.PriceEventHandler;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 
@@ -24,19 +26,29 @@ public class Main {
         disruptor.handleEventsWith(new PriceEventHandler());
         disruptor.start();
 
-        WebSocketClient client = new WebSocketClient();
-        BinanceWebsocketClient socket = new BinanceWebsocketClient(disruptor.getRingBuffer());
+        // Instantiate and configure HttpClient.
+        HttpClient httpClient = new HttpClient();
+        // For example, configure a proxy.
+        // httpClient.getProxyConfiguration().addProxy(new HttpProxy("localhost", 8888));
 
+        // Instantiate WebSocketClient, passing HttpClient to the constructor.
+        WebSocketClient webSocketClient = new WebSocketClient(httpClient);
+        // Configure WebSocketClient, for example:
+        webSocketClient.setMaxTextMessageSize(8 * 1024);
+
+        // Start WebSocketClient; this implicitly starts also HttpClient.
         try {
-            client.start();
-            URI uri = new URI(BinanceWebsocketClient.URI);
-            ClientUpgradeRequest request = new ClientUpgradeRequest();
-            client.connect(socket, uri, request);
+            webSocketClient.start();
+
+            WebSocketSessionListener listener = new WebSocketSessionListener(disruptor.getRingBuffer());
+            URI uri = new URI(Configuration.BINANCE_WS_URI);
+
+            ClientUpgradeRequest upgradeRequest = new ClientUpgradeRequest();
+            webSocketClient.connect(listener, uri, upgradeRequest);
 
             TimeUnit.MINUTES.sleep(1);
         } finally {
-            client.stop();
+            webSocketClient.stop();
         }
     }
-
 }
