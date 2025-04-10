@@ -11,7 +11,7 @@ public class PriceEventHandler implements EventHandler<PriceEvent> {
     @Override
     public void onEvent(PriceEvent event, long sequence, boolean endOfBatch) {
 //        log.info("Event handled");
-        System.out.println("Event handled");
+//        System.out.println("Event handled");
 
 //        ByteBuffer copy = event.getValue().duplicate();
 //        log.info("Event handled: {}", StandardCharsets.UTF_8.decode(copy));
