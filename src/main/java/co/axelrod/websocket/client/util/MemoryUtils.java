@@ -1,4 +1,4 @@
-package co.axelrod.lmax.util;
+package co.axelrod.websocket.client.util;
 
 public class MemoryUtils {
     public static void printMemoryUsage() {

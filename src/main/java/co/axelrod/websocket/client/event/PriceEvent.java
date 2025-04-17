@@ -1,4 +1,4 @@
-package co.axelrod.lmax.event;
+package co.axelrod.websocket.client.event;
 
 import io.netty.buffer.ByteBuf;
 

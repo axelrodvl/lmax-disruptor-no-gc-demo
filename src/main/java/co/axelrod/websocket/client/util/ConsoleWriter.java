@@ -1,4 +1,4 @@
-package co.axelrod.lmax.util;
+package co.axelrod.websocket.client.util;
 
 import io.netty.buffer.ByteBuf;
 
@@ -18,19 +18,19 @@ public class ConsoleWriter {
 
     public static void write(Object... parts) {
         for (Object part : parts) {
-            if (part instanceof byte[] partByte) {
-                for (byte b : partByte) {
-                    System.out.write(b);
+            switch (part) {
+                case byte[] partByte -> {
+                    for (byte b : partByte) {
+                        System.out.write(b);
+                    }
                 }
-            } else if (part instanceof String string) {
-                for (byte b : string.getBytes()) {
-                    System.out.write(b);
+                case String string -> {
+                    for (byte b : string.getBytes()) {
+                        System.out.write(b);
+                    }
                 }
-            } else if (part instanceof Long l) {
-                System.out.print(l);
-            }
-            else {
-                System.out.print(part);
+                case Long l -> System.out.print(l);
+                default -> System.out.print(part);
             }
         }
         System.out.write('\n');

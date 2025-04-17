@@ -1,4 +1,4 @@
-package co.axelrod.lmax.netty;
+package co.axelrod.websocket.client.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -27,17 +27,16 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
     }
 
     @Override
-    protected void initChannel(Channel ch) throws Exception {
-        final SslContext sslCtx = SslContextBuilder.forClient().sslProvider(SslProvider.OPENSSL_REFCNT).build();
+    protected void initChannel(Channel channel) throws Exception {
+        final SslContext sslCtx = SslContextBuilder.forClient()
+                .sslProvider(SslProvider.OPENSSL_REFCNT)
+                .build();
 
-        String host = uri.getHost();
-        int port = uri.getPort();
-
-        ChannelPipeline p = ch.pipeline();
-        p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
-        p.addLast(new HttpClientCodec());
-        p.addLast(new HttpObjectAggregator(MAX_CONTENT_LENGTH));
-        p.addLast(new WebSocketClientProtocolHandler(
+        ChannelPipeline pipeline = channel.pipeline();
+        pipeline.addLast(sslCtx.newHandler(channel.alloc(), uri.getHost(), uri.getPort()));
+        pipeline.addLast(new HttpClientCodec());
+        pipeline.addLast(new HttpObjectAggregator(MAX_CONTENT_LENGTH));
+        pipeline.addLast(new WebSocketClientProtocolHandler(
                 uri,
                 WebSocketVersion.V13,
                 null,
@@ -45,6 +44,6 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
                 new DefaultHttpHeaders(),
                 MAX_FRAME_PAYLOAD_LENGTH
         ));
-        p.addLast(webSocketClientHandler);
+        pipeline.addLast(webSocketClientHandler);
     }
 }

@@ -1,2 +1,1 @@
-
-# WebSocket client with LMAX Disruptor storage with No GC (EpsilonGC) - 32 Mb only
+Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC) – under 64 MB
