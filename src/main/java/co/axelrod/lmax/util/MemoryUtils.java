@@ -4,16 +4,23 @@ public class MemoryUtils {
     public static void printMemoryUsage() {
         Runtime runtime = Runtime.getRuntime();
 
-        long totalMemory = runtime.totalMemory();     // Allocated memory
-        long maxMemory = runtime.maxMemory();         // Max memory JVM can use
-        long freeMemory = runtime.freeMemory();       // Free memory in allocated pool
-        long usedMemory = totalMemory - freeMemory;   // Used memory in allocated pool
+        // Allocated memory
+        long totalMemory = runtime.totalMemory();
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Allocated memory (totalMemory): " + (totalMemory / 1024) + " KB");
-        System.out.println("Maximum memory (maxMemory): " + (maxMemory / 1024) + " KB");
-        System.out.println("Free memory: " + (freeMemory / 1024) + " KB");
-        System.out.println("Used memory: " + (usedMemory / 1024) + " KB");
-        System.out.println("---------------------------------------------------");
+        // Max memory JVM can use
+        long maxMemory = runtime.maxMemory();
+
+        // Free memory in allocated pool
+        long freeMemory = runtime.freeMemory();
+
+        // Used memory in allocated pool
+        long usedMemory = totalMemory - freeMemory;
+
+        ConsoleWriter.write("---------------------------------------------------");
+        ConsoleWriter.write("Allocated memory (totalMemory): ", totalMemory / 1024, " KB");
+        ConsoleWriter.write("Maximum memory (maxMemory): ", (maxMemory / 1024), " KB");
+        ConsoleWriter.write("Free memory: ", (freeMemory / 1024), " KB");
+        ConsoleWriter.write("Used memory: ", (usedMemory / 1024), " KB");
+        ConsoleWriter.write("---------------------------------------------------");
     }
 }

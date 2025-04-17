@@ -1,6 +1,7 @@
 package co.axelrod.lmax.netty;
 
 import co.axelrod.lmax.event.PriceEvent;
+import co.axelrod.lmax.util.ConsoleWriter;
 import com.lmax.disruptor.RingBuffer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,7 +11,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
-
     private final RingBuffer<PriceEvent> ringBuffer;
 
     public WebSocketClientHandler(RingBuffer<PriceEvent> ringBuffer) {
@@ -20,7 +20,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt == WebSocketClientProtocolHandler.ClientHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-            System.out.println("Handshake completed, WebSocket connected");
+            ConsoleWriter.write("Handshake completed, WebSocket connected");
         } else {
             super.userEventTriggered(ctx, evt);
         }
@@ -38,7 +38,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                 ringBuffer.publish(seq);
             }
         } else if (msg instanceof CloseWebSocketFrame) {
-            System.out.println("Received close frame, shutting down");
+            ConsoleWriter.write("Received close frame, shutting down");
             ctx.channel().close();
         }
     }

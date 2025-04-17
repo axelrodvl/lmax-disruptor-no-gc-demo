@@ -42,10 +42,11 @@ public class Main {
             Channel ch = b.connect(host, port).sync().channel();
 
             // Print memory usage
-            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 15, TimeUnit.SECONDS);
-            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 30, TimeUnit.SECONDS);
-            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 45, TimeUnit.SECONDS);
-            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 60, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(MemoryUtils::printMemoryUsage, 15, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(MemoryUtils::printMemoryUsage, 30, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(MemoryUtils::printMemoryUsage, 45, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(MemoryUtils::printMemoryUsage, 60, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(() -> ch.close(), 60, TimeUnit.SECONDS);
 
             ch.closeFuture().sync();
         } finally {
