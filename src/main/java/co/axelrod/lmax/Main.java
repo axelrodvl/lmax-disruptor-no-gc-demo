@@ -1,24 +1,24 @@
 package co.axelrod.lmax;
 
-import co.axelrod.lmax.jetty.WebSocketSessionListener;
 import co.axelrod.lmax.config.Configuration;
 import co.axelrod.lmax.event.PriceEvent;
 import co.axelrod.lmax.event.PriceEventHandler;
+import co.axelrod.lmax.netty.WebSocketChannelInitializer;
+import co.axelrod.lmax.netty.WebSocketClientHandler;
+import co.axelrod.lmax.util.MemoryUtils;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import static co.axelrod.lmax.util.MemoryUtils.printMemoryUsage;
-
 public class Main {
     public static void main(String[] args) throws Exception {
-        printMemoryUsage();
-
         int bufferSize = 1024;
 
         Disruptor<PriceEvent> disruptor = new Disruptor<>(PriceEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
@@ -26,29 +26,31 @@ public class Main {
         disruptor.handleEventsWith(new PriceEventHandler());
         disruptor.start();
 
-        // Instantiate and configure HttpClient.
-        HttpClient httpClient = new HttpClient();
-        // For example, configure a proxy.
-        // httpClient.getProxyConfiguration().addProxy(new HttpProxy("localhost", 8888));
+        URI uri = new URI(Configuration.BINANCE_WS_URI);
+        String host = uri.getHost();
+        int port = uri.getPort();
 
-        // Instantiate WebSocketClient, passing HttpClient to the constructor.
-        WebSocketClient webSocketClient = new WebSocketClient(httpClient);
-        // Configure WebSocketClient, for example:
-        webSocketClient.setMaxTextMessageSize(8 * 1024);
+        WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(disruptor.getRingBuffer());
+        WebSocketChannelInitializer webSocketChannelInitializer = new WebSocketChannelInitializer(uri, webSocketClientHandler);
 
-        // Start WebSocketClient; this implicitly starts also HttpClient.
+        EventLoopGroup group = new NioEventLoopGroup();
         try {
-            webSocketClient.start();
+            Bootstrap b = new Bootstrap();
+            b.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(webSocketChannelInitializer);
+            Channel ch = b.connect(host, port).sync().channel();
 
-            WebSocketSessionListener listener = new WebSocketSessionListener(disruptor.getRingBuffer());
-            URI uri = new URI(Configuration.BINANCE_WS_URI);
+            // Print memory usage
+            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 15, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 30, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 45, TimeUnit.SECONDS);
+            ch.eventLoop().schedule(() -> MemoryUtils.printMemoryUsage(), 60, TimeUnit.SECONDS);
 
-            ClientUpgradeRequest upgradeRequest = new ClientUpgradeRequest();
-            webSocketClient.connect(listener, uri, upgradeRequest);
-
-            TimeUnit.MINUTES.sleep(1);
+            ch.closeFuture().sync();
         } finally {
-            webSocketClient.stop();
+            group.shutdownGracefully();
+            disruptor.shutdown();
         }
     }
 }

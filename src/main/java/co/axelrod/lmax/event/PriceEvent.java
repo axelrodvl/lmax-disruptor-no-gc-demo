@@ -1,20 +1,15 @@
 package co.axelrod.lmax.event;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 public class PriceEvent {
-    private ByteBuffer value;
+    private ByteBuf buffer;
 
-    public void setValue(ByteBuffer value) {
-        this.value = value;
+    public void setBuffer(ByteBuf buffer) {
+        this.buffer = buffer;
     }
 
-    public ByteBuffer getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "PriceEvent{" + "value=" + value + '}';
+    public ByteBuf getBuffer() {
+        return buffer;
     }
 }

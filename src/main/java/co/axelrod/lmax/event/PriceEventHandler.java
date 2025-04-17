@@ -1,20 +1,21 @@
 package co.axelrod.lmax.event;
 
 import com.lmax.disruptor.EventHandler;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import io.netty.buffer.ByteBuf;
 
 public class PriceEventHandler implements EventHandler<PriceEvent> {
-//    private static final Logger log = LoggerFactory.getLogger(PriceEventHandler.class);
-
     @Override
     public void onEvent(PriceEvent event, long sequence, boolean endOfBatch) {
-//        log.info("Event handled");
-//        System.out.println("Event handled");
-
-//        ByteBuffer copy = event.getValue().duplicate();
-//        log.info("Event handled: {}", StandardCharsets.UTF_8.decode(copy));
-//        System.out.println("Event handled: " + StandardCharsets.UTF_8.decode(copy));
+        ByteBuf buf = event.getBuffer();
+        int len = buf.readableBytes();
+        try {
+            int readerIndex = buf.readerIndex();
+            for (int i = 0; i < len; i++) {
+                System.out.write(buf.getByte(readerIndex + i));
+            }
+            System.out.write('\n');
+        } finally {
+            buf.release();
+        }
     }
 }

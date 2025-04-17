@@ -10,23 +10,10 @@ public class MemoryUtils {
         long usedMemory = totalMemory - freeMemory;   // Used memory in allocated pool
 
         System.out.println("---------------------------------------------------");
-        System.out.println("Allocated memory (totalMemory): " + (totalMemory / 1024 / 1024) + " MB");
-        System.out.println("Maximum memory (maxMemory): " + (maxMemory / 1024 / 1024) + " MB");
-        System.out.println("Free memory: " + (freeMemory / 1024 / 1024) + " MB");
-        System.out.println("Used memory: " + (usedMemory / 1024 / 1024) + " MB");
+        System.out.println("Allocated memory (totalMemory): " + (totalMemory / 1024) + " KB");
+        System.out.println("Maximum memory (maxMemory): " + (maxMemory / 1024) + " KB");
+        System.out.println("Free memory: " + (freeMemory / 1024) + " KB");
+        System.out.println("Used memory: " + (usedMemory / 1024) + " KB");
         System.out.println("---------------------------------------------------");
-    }
-
-    public static void allocateMemoryInCycle() throws InterruptedException {
-        int size = 10_000_000;
-
-        for (int i = 0; i < 1000; i++) {
-            byte[] array = new byte[size];
-            printMemoryUsage();
-            Thread.sleep(1000L);
-            System.out.println("Iteration: " + i + ", allocated " + (i + 1) * size / 1000000 + " MB");
-        }
-
-        System.out.println("Done");
     }
 }
