@@ -1,7 +1,7 @@
 package co.axelrod.websocket.client.netty;
 
 import co.axelrod.websocket.client.event.PriceEvent;
-import co.axelrod.websocket.client.util.MemoryUtils;
+import co.axelrod.websocket.client.memory.MemoryUtils;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -10,6 +10,8 @@ import io.netty.channel.IoHandlerFactory;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +27,8 @@ public class WebSocketClient {
     }
 
     public void start() throws InterruptedException {
+        InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
+
         IoHandlerFactory ioHandlerFactory = NioIoHandler.newFactory();
 
         try (EventLoopGroup group = new MultiThreadIoEventLoopGroup(ioHandlerFactory)) {
@@ -36,19 +40,7 @@ public class WebSocketClient {
                     .sync()
                     .channel();
 
-            schedulePrintingMemoryUsageAndClosingChannel(channel);
-
             channel.closeFuture().sync();
         }
-    }
-
-    private static void schedulePrintingMemoryUsageAndClosingChannel(Channel channel) {
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 15, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 30, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 45, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 60, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 120, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(MemoryUtils::printMemoryUsage, 240, TimeUnit.SECONDS);
-        channel.eventLoop().schedule(() -> channel.close(), 240, TimeUnit.SECONDS);
     }
 }

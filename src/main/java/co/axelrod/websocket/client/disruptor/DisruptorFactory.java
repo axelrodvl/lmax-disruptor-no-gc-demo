@@ -6,7 +6,7 @@ import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 
 public class DisruptorFactory {
-    private static final int DISRUPTOR_BUFFER_SIZE = 1024;
+    private static final int DISRUPTOR_BUFFER_SIZE = 16;
 
     public static Disruptor<PriceEvent> getDisruptor() {
         Disruptor<PriceEvent> disruptor = new Disruptor<>(

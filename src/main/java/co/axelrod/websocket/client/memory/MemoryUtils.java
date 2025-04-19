@@ -1,4 +1,6 @@
-package co.axelrod.websocket.client.util;
+package co.axelrod.websocket.client.memory;
+
+import co.axelrod.websocket.client.console.ConsoleWriter;
 
 public class MemoryUtils {
     public static void printMemoryUsage() {

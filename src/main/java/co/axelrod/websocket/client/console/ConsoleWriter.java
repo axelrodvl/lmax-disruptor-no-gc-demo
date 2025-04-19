@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.util;
+package co.axelrod.websocket.client.console;
 
 import io.netty.buffer.ByteBuf;
 

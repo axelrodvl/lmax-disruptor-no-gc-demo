@@ -1,1 +1,3 @@
 Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC) – under 64 MB
+
+# Memory allocations (for 64-bit OS)

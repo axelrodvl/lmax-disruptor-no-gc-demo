@@ -1,7 +1,7 @@
 package co.axelrod.websocket.client.netty;
 
 import co.axelrod.websocket.client.event.PriceEvent;
-import co.axelrod.websocket.client.util.ConsoleWriter;
+import co.axelrod.websocket.client.console.ConsoleWriter;
 import com.lmax.disruptor.RingBuffer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
