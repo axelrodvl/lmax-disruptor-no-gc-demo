@@ -3,6 +3,13 @@ package co.axelrod.websocket.client.monitoring;
 import co.axelrod.websocket.client.logging.ConsoleWriter;
 
 public class MemoryUtils {
+    public static final byte[] DELIMITER = "---------------------------------------------------".getBytes();
+    public static final byte[] ALLOCATED_MEMORY = "Allocated memory (totalMemory): ".getBytes();
+    public static final byte[] MAXIMUM_MEMORY = "Maximum memory (maxMemory): ".getBytes();
+    public static final byte[] FREE_MEMORY = "Free memory: ".getBytes();
+    public static final byte[] USER_MEMORY = "Used memory: ".getBytes();
+    public static final byte[] KB = " KB".getBytes();
+
     public static void printMemoryUsage() {
         Runtime runtime = Runtime.getRuntime();
 
@@ -18,11 +25,19 @@ public class MemoryUtils {
         // Used memory in allocated pool
         long usedMemory = totalMemory - freeMemory;
 
-        ConsoleWriter.write("---------------------------------------------------");
-        ConsoleWriter.write("Allocated memory (totalMemory): ", totalMemory / 1024, " KB");
-        ConsoleWriter.write("Maximum memory (maxMemory): ", (maxMemory / 1024), " KB");
-        ConsoleWriter.write("Free memory: ", (freeMemory / 1024), " KB");
-        ConsoleWriter.write("Used memory: ", (usedMemory / 1024), " KB");
-        ConsoleWriter.write("---------------------------------------------------");
+        ConsoleWriter.writeWithNewLine(DELIMITER);
+        ConsoleWriter.write(ALLOCATED_MEMORY);
+        ConsoleWriter.write((int) totalMemory / 1024);
+        ConsoleWriter.writeWithNewLine(KB);
+        ConsoleWriter.write(MAXIMUM_MEMORY);
+        ConsoleWriter.write((int) (maxMemory / 1024));
+        ConsoleWriter.writeWithNewLine(KB);
+        ConsoleWriter.write(FREE_MEMORY);
+        ConsoleWriter.write((int) (freeMemory / 1024));
+        ConsoleWriter.writeWithNewLine(KB);
+        ConsoleWriter.write(USER_MEMORY);
+        ConsoleWriter.write((int) (usedMemory / 1024));
+        ConsoleWriter.writeWithNewLine(KB);
+        ConsoleWriter.writeWithNewLine(DELIMITER);
     }
 }

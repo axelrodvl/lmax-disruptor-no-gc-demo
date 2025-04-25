@@ -8,13 +8,17 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PriceEventHandler implements EventHandler<PriceEvent> {
+    public static final byte[] BYTES = ") ".getBytes();
+
     private final AtomicInteger eventCount = new AtomicInteger(0);
 
     @Override
     public void onEvent(PriceEvent event, long sequence, boolean endOfBatch) {
         eventCount.incrementAndGet();
         ByteBuffer byteBuffer = event.getByteBuffer();
-        ConsoleWriter.write(eventCount.get(), ") ", byteBuffer);
+        ConsoleWriter.write(eventCount.get());
+        ConsoleWriter.write(BYTES);
+        ConsoleWriter.writeWithNewLine(byteBuffer);
     }
 
     public int getEventCount() {

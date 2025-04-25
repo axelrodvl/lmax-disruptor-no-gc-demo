@@ -8,6 +8,10 @@ import com.lmax.disruptor.dsl.Disruptor;
 import java.util.concurrent.TimeUnit;
 
 public class Monitoring {
+    public static final byte[] DELIMITER = "---------------------------------------------------".getBytes();
+    public static final byte[] DISRUPTOR_BUFFER_SIZE = "Disruptor buffer size: ".getBytes();
+    public static final byte[] HANDLED_EVENTS = "Handled events: ".getBytes();
+
     private final PriceEventHandler priceEventHandler;
     private final Disruptor<PriceEvent> disruptor;
 
@@ -41,12 +45,14 @@ public class Monitoring {
     }
 
     private void printDisruptorState() {
-        ConsoleWriter.write("---------------------------------------------------");
-        ConsoleWriter.write("Disruptor buffer size: ", disruptor.getRingBuffer().getBufferSize());
+        ConsoleWriter.writeWithNewLine(DELIMITER);
+        ConsoleWriter.write(DISRUPTOR_BUFFER_SIZE);
+        ConsoleWriter.writeWithNewLine(disruptor.getRingBuffer().getBufferSize());
     }
 
     private void printHandledEvents() {
-        ConsoleWriter.write("---------------------------------------------------");
-        ConsoleWriter.write("Handled events: ", priceEventHandler.getEventCount());
+        ConsoleWriter.writeWithNewLine(DELIMITER);
+        ConsoleWriter.write(HANDLED_EVENTS);
+        ConsoleWriter.writeWithNewLine(priceEventHandler.getEventCount());
     }
 }
