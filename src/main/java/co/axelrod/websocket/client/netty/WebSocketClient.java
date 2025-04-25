@@ -1,7 +1,6 @@
 package co.axelrod.websocket.client.netty;
 
 import co.axelrod.websocket.client.event.PriceEvent;
-import co.axelrod.websocket.client.memory.MemoryUtils;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -14,7 +13,6 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 public class WebSocketClient {
     private final URI uri;

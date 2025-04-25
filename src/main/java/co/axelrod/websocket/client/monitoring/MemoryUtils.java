@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.memory;
+package co.axelrod.websocket.client.monitoring;
 
 import co.axelrod.websocket.client.console.ConsoleWriter;
 

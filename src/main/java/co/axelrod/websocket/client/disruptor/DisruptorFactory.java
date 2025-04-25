@@ -8,13 +8,12 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
 public class DisruptorFactory {
     private static final int DISRUPTOR_BUFFER_SIZE = 16;
 
-    public static Disruptor<PriceEvent> getDisruptor() {
+    public static Disruptor<PriceEvent> getDisruptor(PriceEventHandler priceEventHandler) {
         Disruptor<PriceEvent> disruptor = new Disruptor<>(
                 PriceEvent::new,
                 DISRUPTOR_BUFFER_SIZE,
                 DaemonThreadFactory.INSTANCE);
 
-        PriceEventHandler priceEventHandler = new PriceEventHandler();
         disruptor.handleEventsWith(priceEventHandler);
 
         return disruptor;
