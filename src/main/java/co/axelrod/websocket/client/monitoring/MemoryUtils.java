@@ -2,13 +2,14 @@ package co.axelrod.websocket.client.monitoring;
 
 import co.axelrod.websocket.client.logging.ConsoleWriter;
 
+import static co.axelrod.websocket.client.logging.ConsoleConstant.DELIMITER;
+import static co.axelrod.websocket.client.logging.ConsoleConstant.KB;
+
 public class MemoryUtils {
-    public static final byte[] DELIMITER = "---------------------------------------------------".getBytes();
     public static final byte[] ALLOCATED_MEMORY = "Allocated memory (totalMemory): ".getBytes();
     public static final byte[] MAXIMUM_MEMORY = "Maximum memory (maxMemory): ".getBytes();
     public static final byte[] FREE_MEMORY = "Free memory: ".getBytes();
     public static final byte[] USER_MEMORY = "Used memory: ".getBytes();
-    public static final byte[] KB = " KB".getBytes();
 
     public static void printMemoryUsage() {
         Runtime runtime = Runtime.getRuntime();
