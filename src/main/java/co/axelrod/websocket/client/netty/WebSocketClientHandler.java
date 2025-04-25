@@ -33,9 +33,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             long sequenceNumber = ringBuffer.next();
             try {
                 PriceEvent event = ringBuffer.get(sequenceNumber);
-                event.setBuffer(buf);
+                event.setByteBuffer(buf.nioBuffer());
             } finally {
                 ringBuffer.publish(sequenceNumber);
+                buf.release();
             }
         } else if (msg instanceof CloseWebSocketFrame) {
             ConsoleWriter.write("Received close frame, shutting down");

@@ -1,24 +1,20 @@
 package co.axelrod.websocket.client.logging;
 
-import io.netty.buffer.ByteBuf;
+import java.nio.ByteBuffer;
 
 public class ConsoleWriter {
-    public static void write(ByteBuf buffer) {
-        int len = buffer.readableBytes();
-        try {
-            int readerIndex = buffer.readerIndex();
-            for (int i = 0; i < len; i++) {
-                System.out.write(buffer.getByte(readerIndex + i));
-            }
-            System.out.write('\n');
-        } finally {
-            buffer.release();
-        }
-    }
-
     public static void write(Object... parts) {
         for (Object part : parts) {
             switch (part) {
+                case ByteBuffer byteBuffer -> {
+                    int length = byteBuffer.remaining();
+                    for (int i = 0; i < length; i++) {
+                        System.out.write(byteBuffer.get(i));
+                    }
+                }
+                case Byte singleByte -> {
+                    System.out.write(singleByte);
+                }
                 case byte[] partByte -> {
                     for (byte b : partByte) {
                         System.out.write(b);

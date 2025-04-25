@@ -4,6 +4,7 @@ import co.axelrod.websocket.client.logging.ConsoleWriter;
 import com.lmax.disruptor.EventHandler;
 import io.netty.buffer.ByteBuf;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PriceEventHandler implements EventHandler<PriceEvent> {
@@ -12,8 +13,8 @@ public class PriceEventHandler implements EventHandler<PriceEvent> {
     @Override
     public void onEvent(PriceEvent event, long sequence, boolean endOfBatch) {
         eventCount.incrementAndGet();
-        ByteBuf buffer = event.getBuffer();
-        ConsoleWriter.write(buffer);
+        ByteBuffer byteBuffer = event.getByteBuffer();
+        ConsoleWriter.write(eventCount.get(), ") ", byteBuffer);
     }
 
     public int getEventCount() {

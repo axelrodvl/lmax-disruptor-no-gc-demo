@@ -1,15 +1,15 @@
 package co.axelrod.websocket.client.event;
 
-import io.netty.buffer.ByteBuf;
+import java.nio.ByteBuffer;
 
 public class PriceEvent {
-    private ByteBuf buffer;
+    private ByteBuffer byteBuffer;
 
-    public void setBuffer(ByteBuf buffer) {
-        this.buffer = buffer;
+    public void setByteBuffer(ByteBuffer byteBuffer) {
+        this.byteBuffer = byteBuffer;
     }
 
-    public ByteBuf getBuffer() {
-        return buffer;
+    public ByteBuffer getByteBuffer() {
+        return byteBuffer;
     }
 }
