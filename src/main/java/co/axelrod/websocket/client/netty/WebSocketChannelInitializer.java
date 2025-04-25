@@ -1,5 +1,6 @@
 package co.axelrod.websocket.client.netty;
 
+import co.axelrod.websocket.client.config.Configuration;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -15,8 +16,7 @@ import io.netty.handler.ssl.SslProvider;
 import java.net.URI;
 
 public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
-    private static final int MAX_CONTENT_LENGTH = 8192;
-    private static final int MAX_FRAME_PAYLOAD_LENGTH = 65536;
+
 
     private final URI uri;
     private final WebSocketClientHandler webSocketClientHandler;
@@ -35,14 +35,14 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
         ChannelPipeline pipeline = channel.pipeline();
         pipeline.addLast(sslCtx.newHandler(channel.alloc(), uri.getHost(), uri.getPort()));
         pipeline.addLast(new HttpClientCodec());
-        pipeline.addLast(new HttpObjectAggregator(MAX_CONTENT_LENGTH));
+        pipeline.addLast(new HttpObjectAggregator(Configuration.WS_MAX_CONTENT_LENGTH));
         pipeline.addLast(new WebSocketClientProtocolHandler(
                 uri,
                 WebSocketVersion.V13,
                 null,
                 true,
                 new DefaultHttpHeaders(),
-                MAX_FRAME_PAYLOAD_LENGTH
+                Configuration.WS_MAX_FRAME_PAYLOAD_LENGTH
         ));
         pipeline.addLast(webSocketClientHandler);
     }
