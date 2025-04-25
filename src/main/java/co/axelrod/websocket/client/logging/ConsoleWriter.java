@@ -9,9 +9,13 @@ public class ConsoleWriter {
             return;
         }
 
+        if (value < 0) {
+            System.out.write('-');
+            value = -value;
+        }
+
         int digits = 0;
         int temp = value;
-
         while (temp > 0) {
             temp /= 10;
             digits++;

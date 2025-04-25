@@ -18,8 +18,8 @@ public class Main {
 
         WebSocketClient webSocketClient = new WebSocketClient(disruptor, Configuration.BINANCE_WS_URI);
 
-        Monitoring monitoring = new Monitoring(priceEventHandler, webSocketClient, disruptor);
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+        Monitoring monitoring = new Monitoring(priceEventHandler, disruptor);
+//        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
         try {
             monitoring.start();

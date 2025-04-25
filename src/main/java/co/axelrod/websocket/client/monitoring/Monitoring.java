@@ -3,7 +3,6 @@ package co.axelrod.websocket.client.monitoring;
 import co.axelrod.websocket.client.logging.ConsoleWriter;
 import co.axelrod.websocket.client.event.PriceEvent;
 import co.axelrod.websocket.client.event.PriceEventHandler;
-import co.axelrod.websocket.client.netty.WebSocketClient;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.buffer.*;
 
@@ -19,14 +18,12 @@ public class Monitoring {
     public static final byte[] HANDLED_EVENTS = "Handled events: ".getBytes();
 
     private final PriceEventHandler priceEventHandler;
-    private final WebSocketClient webSocketClient;
     private final Disruptor<PriceEvent> disruptor;
 
     private static final int DELAY_IN_SECONDS = 10;
 
-    public Monitoring(PriceEventHandler priceEventHandler, WebSocketClient webSocketClient, Disruptor<PriceEvent> disruptor) {
+    public Monitoring(PriceEventHandler priceEventHandler, Disruptor<PriceEvent> disruptor) {
         this.priceEventHandler = priceEventHandler;
-        this.webSocketClient = webSocketClient;
         this.disruptor = disruptor;
     }
 
