@@ -1,6 +1,6 @@
 package co.axelrod.websocket.client.monitoring;
 
-import co.axelrod.websocket.client.console.ConsoleWriter;
+import co.axelrod.websocket.client.logging.ConsoleWriter;
 import co.axelrod.websocket.client.event.PriceEvent;
 import co.axelrod.websocket.client.event.PriceEventHandler;
 import com.lmax.disruptor.dsl.Disruptor;

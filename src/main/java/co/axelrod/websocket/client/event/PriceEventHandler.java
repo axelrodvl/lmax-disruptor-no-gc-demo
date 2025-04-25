@@ -1,6 +1,6 @@
 package co.axelrod.websocket.client.event;
 
-import co.axelrod.websocket.client.console.ConsoleWriter;
+import co.axelrod.websocket.client.logging.ConsoleWriter;
 import com.lmax.disruptor.EventHandler;
 import io.netty.buffer.ByteBuf;
 

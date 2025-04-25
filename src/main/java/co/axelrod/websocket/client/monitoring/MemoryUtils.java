@@ -1,6 +1,6 @@
 package co.axelrod.websocket.client.monitoring;
 
-import co.axelrod.websocket.client.console.ConsoleWriter;
+import co.axelrod.websocket.client.logging.ConsoleWriter;
 
 public class MemoryUtils {
     public static void printMemoryUsage() {
