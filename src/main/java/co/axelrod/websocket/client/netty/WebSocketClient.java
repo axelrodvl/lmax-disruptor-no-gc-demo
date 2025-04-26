@@ -8,6 +8,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
@@ -45,7 +46,8 @@ public class WebSocketClient implements Startable {
     @Override
     public void stop() throws Exception {
         if (channel != null) {
-            channel.close().sync();
+            channel.writeAndFlush(new CloseWebSocketFrame()).sync();
+            channel.closeFuture().sync();
         }
         if (group != null) {
             group.shutdownGracefully().sync();
