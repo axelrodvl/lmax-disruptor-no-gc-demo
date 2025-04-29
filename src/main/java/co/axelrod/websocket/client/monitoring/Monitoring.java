@@ -2,8 +2,8 @@ package co.axelrod.websocket.client.monitoring;
 
 import co.axelrod.websocket.client.lifecycle.Startable;
 import co.axelrod.websocket.client.logging.ConsoleWriter;
-import co.axelrod.websocket.client.event.PriceEvent;
-import co.axelrod.websocket.client.event.PriceEventHandler;
+import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
+import co.axelrod.websocket.client.disruptor.event.BookDepthEventHandler;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.buffer.*;
 
@@ -18,16 +18,16 @@ public class Monitoring implements Startable {
     public static final byte[] USED_DIRECT_MEMORY = "Used direct memory: ".getBytes();
     public static final byte[] HANDLED_EVENTS = "Handled events: ".getBytes();
 
-    private final PriceEventHandler priceEventHandler;
-    private final Disruptor<PriceEvent> disruptor;
+    private final BookDepthEventHandler bookDepthEventHandler;
+    private final Disruptor<BookDepthEvent> disruptor;
 
     private static final int DELAY_IN_SECONDS = 10;
 
     private volatile boolean running = true;
     private Thread monitoringThread;
 
-    public Monitoring(PriceEventHandler priceEventHandler, Disruptor<PriceEvent> disruptor) {
-        this.priceEventHandler = priceEventHandler;
+    public Monitoring(BookDepthEventHandler bookDepthEventHandler, Disruptor<BookDepthEvent> disruptor) {
+        this.bookDepthEventHandler = bookDepthEventHandler;
         this.disruptor = disruptor;
     }
 
@@ -72,7 +72,7 @@ public class Monitoring implements Startable {
         ConsoleWriter.writeWithNewLine(DELIMITER);
 
         ConsoleWriter.write(HANDLED_EVENTS);
-        ConsoleWriter.writeWithNewLine(priceEventHandler.getEventCount());
+        ConsoleWriter.writeWithNewLine(bookDepthEventHandler.getEventCount());
     }
 
     private void printDisruptorState() {

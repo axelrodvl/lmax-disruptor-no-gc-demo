@@ -1,6 +1,6 @@
 package co.axelrod.websocket.client.netty;
 
-import co.axelrod.websocket.client.event.PriceEvent;
+import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
 import co.axelrod.websocket.client.lifecycle.Startable;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.bootstrap.Bootstrap;
@@ -21,7 +21,7 @@ public class WebSocketClient implements Startable {
     private EventLoopGroup group;
     private Channel channel;
 
-    public WebSocketClient(Disruptor<PriceEvent> disruptor, URI uri) {
+    public WebSocketClient(Disruptor<BookDepthEvent> disruptor, URI uri) {
         this.uri = uri;
         WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(disruptor.getRingBuffer());
         this.webSocketChannelInitializer = new WebSocketChannelInitializer(uri, webSocketClientHandler);
@@ -41,6 +41,8 @@ public class WebSocketClient implements Startable {
         channel = bootstrap.connect(uri.getHost(), uri.getPort())
                 .sync()
                 .channel();
+
+        channel.closeFuture().sync();
     }
 
     @Override
