@@ -11,11 +11,22 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 public class BinanceBookDepthParser {
+    private static final Bytes<ByteBuffer> BYTES = Bytes.elasticByteBuffer(Configuration.WS_MAX_CONTENT_LENGTH);
+    private static final JSONWire WIRE = new JSONWire(BYTES);
+    private static final BinancePartialBookDepth PARSED = new BinancePartialBookDepth();
+
     public static void parseBookDepth(ByteBuffer source, BookDepth target) {
-        // TODO Rewrite to reuse the same wire?
-        JSONWire wire = new JSONWire(Bytes.wrapForRead(source));
+        WIRE.bytes().clear();
+        int remaining = source.remaining();
+
+        // Copy ByteBuffer content into Bytes (off-heap safe)
+        long pos = BYTES.writePosition();
+        for (int i = 0; i < remaining; i++) {
+            BYTES.writeByte(source.get());
+        }
+
         BinancePartialBookDepth parsed = new BinancePartialBookDepth();
-        wire.getValueIn().object(parsed, BinancePartialBookDepth.class);
+        WIRE.getValueIn().object(parsed, BinancePartialBookDepth.class);
 
         target.setStream(parsed.getStream());
         for (int level = 0; level < Configuration.MARKET_DEPTH; level++) {
