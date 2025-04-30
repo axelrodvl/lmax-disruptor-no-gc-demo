@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 ./mvnw clean package
+
+# Note
+# --add-exports and --add-opens are required by Chronicle (https://chronicle.software/chronicle-support-java-17/)
 java \
   -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:+AlwaysPreTouch \
   -Xmx256m \
