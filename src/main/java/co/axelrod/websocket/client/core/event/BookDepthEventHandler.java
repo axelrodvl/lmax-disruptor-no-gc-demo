@@ -1,15 +1,15 @@
-package co.axelrod.websocket.client.disruptor.event;
+package co.axelrod.websocket.client.core.event;
 
 import co.axelrod.websocket.client.config.Configuration;
-import co.axelrod.websocket.client.logging.ConsoleWriter;
+import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import com.lmax.disruptor.EventHandler;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static co.axelrod.websocket.client.logging.ConsoleConstant.SLASH;
-import static co.axelrod.websocket.client.logging.ConsoleConstant.SPACE;
-import static co.axelrod.websocket.client.parser.BinanceBookDepthParser.parseBookDepth;
+import static co.axelrod.websocket.client.util.logging.ConsoleConstant.SLASH;
+import static co.axelrod.websocket.client.util.logging.ConsoleConstant.SPACE;
+import static co.axelrod.websocket.client.integration.provider.binance.BinanceBookDepthParser.parseBookDepth;
 
 public class BookDepthEventHandler implements EventHandler<BookDepthEvent> {
     public static final byte[] BYTES = ") ".getBytes();

@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.disruptor.event;
+package co.axelrod.websocket.client.core.model;
 
 import java.util.List;
 import java.util.stream.Stream;

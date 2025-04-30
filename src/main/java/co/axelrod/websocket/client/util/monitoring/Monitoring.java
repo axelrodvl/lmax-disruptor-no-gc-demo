@@ -1,16 +1,16 @@
-package co.axelrod.websocket.client.monitoring;
+package co.axelrod.websocket.client.util.monitoring;
 
 import co.axelrod.websocket.client.lifecycle.Startable;
-import co.axelrod.websocket.client.logging.ConsoleWriter;
-import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
-import co.axelrod.websocket.client.disruptor.event.BookDepthEventHandler;
+import co.axelrod.websocket.client.util.logging.ConsoleWriter;
+import co.axelrod.websocket.client.core.event.BookDepthEvent;
+import co.axelrod.websocket.client.core.event.BookDepthEventHandler;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.buffer.*;
 
 import java.util.concurrent.TimeUnit;
 
-import static co.axelrod.websocket.client.logging.ConsoleConstant.DELIMITER;
-import static co.axelrod.websocket.client.logging.ConsoleConstant.KB;
+import static co.axelrod.websocket.client.util.logging.ConsoleConstant.DELIMITER;
+import static co.axelrod.websocket.client.util.logging.ConsoleConstant.KB;
 
 public class Monitoring implements Startable {
     public static final byte[] DISRUPTOR_BUFFER_SIZE = "Disruptor buffer size: ".getBytes();

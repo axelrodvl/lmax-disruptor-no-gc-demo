@@ -1,0 +1,39 @@
+package co.axelrod.websocket.client.subscription;
+
+import co.axelrod.websocket.client.config.Configuration;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
+public class InstrumentsManager {
+    private final Set<InstrumentsConfigurationListener> listeners;
+    private final Set<String> instruments;
+
+    public InstrumentsManager() {
+        this.listeners = new HashSet<>();
+        this.instruments = new CopyOnWriteArraySet<>(Configuration.DEFAULT_INSTRUMENTS);
+    }
+
+    public void addConfigurationListener(InstrumentsConfigurationListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeConfigurationListener(InstrumentsConfigurationListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    public Set<String> getInstruments() {
+        return instruments;
+    }
+
+    public void subscribe(String instrument) {
+        instruments.add(instrument);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChanged);
+    }
+
+    public void unsubscribe(String instrument) {
+        instruments.remove(instrument);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChanged);
+    }
+}

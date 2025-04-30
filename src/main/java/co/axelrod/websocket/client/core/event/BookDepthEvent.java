@@ -1,6 +1,7 @@
-package co.axelrod.websocket.client.disruptor.event;
+package co.axelrod.websocket.client.core.event;
 
 import co.axelrod.websocket.client.config.Configuration;
+import co.axelrod.websocket.client.core.model.BookDepth;
 
 import java.nio.ByteBuffer;
 

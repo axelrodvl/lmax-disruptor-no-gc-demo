@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.logging;
+package co.axelrod.websocket.client.util.logging;
 
 public class ConsoleConstant {
     public static final byte[] DELIMITER = "---------------------------------------------------".getBytes();

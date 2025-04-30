@@ -1,7 +1,7 @@
-package co.axelrod.websocket.client.netty;
+package co.axelrod.websocket.client.integration.netty;
 
-import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
-import co.axelrod.websocket.client.logging.ConsoleWriter;
+import co.axelrod.websocket.client.core.event.BookDepthEvent;
+import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import com.lmax.disruptor.RingBuffer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

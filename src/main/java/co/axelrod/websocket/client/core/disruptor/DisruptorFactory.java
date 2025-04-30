@@ -1,7 +1,7 @@
-package co.axelrod.websocket.client.disruptor;
+package co.axelrod.websocket.client.core.disruptor;
 
-import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
-import co.axelrod.websocket.client.disruptor.event.BookDepthEventHandler;
+import co.axelrod.websocket.client.core.event.BookDepthEvent;
+import co.axelrod.websocket.client.core.event.BookDepthEventHandler;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 

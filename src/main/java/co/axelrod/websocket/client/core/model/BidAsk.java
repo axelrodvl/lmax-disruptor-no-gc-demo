@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.disruptor.event;
+package co.axelrod.websocket.client.core.model;
 
 public class BidAsk {
     private double priceLevel;

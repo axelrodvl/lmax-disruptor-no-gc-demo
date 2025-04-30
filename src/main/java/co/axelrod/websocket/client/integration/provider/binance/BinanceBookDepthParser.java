@@ -1,9 +1,8 @@
-package co.axelrod.websocket.client.parser;
+package co.axelrod.websocket.client.integration.provider.binance;
 
 import co.axelrod.websocket.client.config.Configuration;
-import co.axelrod.websocket.client.disruptor.event.BidAsk;
-import co.axelrod.websocket.client.disruptor.event.BookDepth;
-import co.axelrod.websocket.client.provider.binance.BinancePartialBookDepth;
+import co.axelrod.websocket.client.core.model.BidAsk;
+import co.axelrod.websocket.client.core.model.BookDepth;
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.wire.JSONWire;
 
@@ -19,8 +18,6 @@ public class BinanceBookDepthParser {
         WIRE.bytes().clear();
         int remaining = source.remaining();
 
-        // Copy ByteBuffer content into Bytes (off-heap safe)
-        long pos = BYTES.writePosition();
         for (int i = 0; i < remaining; i++) {
             BYTES.writeByte(source.get());
         }
@@ -39,16 +36,25 @@ public class BinanceBookDepthParser {
         double quantity;
 
         List<String> bid = parsed.getData().getBids().get(level);
-        priceLevel = Double.parseDouble(bid.getFirst());
-        quantity = Double.parseDouble(bid.getLast());
+
+        priceLevel = Bytes.from(bid.getFirst()).parseDouble();
+        quantity = Bytes.from(bid.getLast()).parseDouble();
+
+//        priceLevel = Double.parseDouble(bid.getFirst());
+//        quantity = Double.parseDouble(bid.getLast());
 
         BidAsk targetBid = target.getBids().get(level);
+
         targetBid.setPriceLevel(priceLevel);
         targetBid.setQuantity(quantity);
 
         List<String> ask = parsed.getData().getAsks().get(level);
-        priceLevel = Double.parseDouble(ask.getFirst());
-        quantity = Double.parseDouble(ask.getLast());
+
+//        priceLevel = Double.parseDouble(ask.getFirst());
+//        quantity = Double.parseDouble(ask.getLast());
+
+        priceLevel = Bytes.from(ask.getFirst()).parseDouble();
+        quantity = Bytes.from(ask.getLast()).parseDouble();
 
         BidAsk targetAsk = target.getAsks().get(level);
         targetAsk.setPriceLevel(priceLevel);

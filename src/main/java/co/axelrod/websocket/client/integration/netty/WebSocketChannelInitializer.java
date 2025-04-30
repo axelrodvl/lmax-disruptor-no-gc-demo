@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.netty;
+package co.axelrod.websocket.client.integration.netty;
 
 import co.axelrod.websocket.client.config.Configuration;
 import io.netty.channel.Channel;

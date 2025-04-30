@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.parser;
+package co.axelrod.websocket.client.integration.provider.binance;
 
 import net.openhft.chronicle.bytes.Bytes;
 import org.openjdk.jmh.annotations.*;

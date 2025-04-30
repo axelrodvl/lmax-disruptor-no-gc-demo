@@ -1,8 +1,8 @@
-package co.axelrod.websocket.client.monitoring;
+package co.axelrod.websocket.client.util.monitoring;
 
-import co.axelrod.websocket.client.logging.ConsoleWriter;
+import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 
-import static co.axelrod.websocket.client.logging.ConsoleConstant.*;
+import static co.axelrod.websocket.client.util.logging.ConsoleConstant.*;
 
 public class MemoryUtils {
     public static final byte[] ALLOCATED_MEMORY = "Allocated memory (totalMemory): ".getBytes();

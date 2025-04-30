@@ -1,6 +1,6 @@
-package co.axelrod.websocket.client.netty;
+package co.axelrod.websocket.client.integration.netty;
 
-import co.axelrod.websocket.client.disruptor.event.BookDepthEvent;
+import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.lifecycle.Startable;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.bootstrap.Bootstrap;
@@ -9,22 +9,28 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.net.URI;
 
-public class WebSocketClient implements Startable {
+public abstract class WebSocketClient implements Startable {
     private final URI uri;
     private final WebSocketChannelInitializer webSocketChannelInitializer;
 
+    WebSocketClientHandler webSocketClientHandler;
     private EventLoopGroup group;
     private Channel channel;
 
     public WebSocketClient(Disruptor<BookDepthEvent> disruptor, URI uri) {
         this.uri = uri;
-        WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(disruptor.getRingBuffer());
+        this.webSocketClientHandler = new WebSocketClientHandler(disruptor.getRingBuffer());
         this.webSocketChannelInitializer = new WebSocketChannelInitializer(uri, webSocketClientHandler);
+    }
+
+    public void send(WebSocketFrame frame) {
+        channel.writeAndFlush(frame);
     }
 
     public void start() throws Exception {

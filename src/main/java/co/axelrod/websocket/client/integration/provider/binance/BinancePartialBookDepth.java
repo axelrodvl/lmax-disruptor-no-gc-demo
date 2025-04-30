@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.provider.binance;
+package co.axelrod.websocket.client.integration.provider.binance;
 
 import net.openhft.chronicle.wire.Marshallable;
 

@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.logging;
+package co.axelrod.websocket.client.util.logging;
 
 import java.nio.ByteBuffer;
 
