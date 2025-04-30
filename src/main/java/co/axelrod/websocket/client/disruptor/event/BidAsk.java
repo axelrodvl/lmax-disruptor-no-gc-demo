@@ -1,22 +1,22 @@
 package co.axelrod.websocket.client.disruptor.event;
 
 public class BidAsk {
-    private long priceLevel;
-    private long quantity;
+    private double priceLevel;
+    private double quantity;
 
-    public long getPriceLevel() {
+    public double getPriceLevel() {
         return priceLevel;
     }
 
-    public long getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setPriceLevel(long priceLevel) {
+    public void setPriceLevel(double priceLevel) {
         this.priceLevel = priceLevel;
     }
 
-    public void setQuantity(long quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 }

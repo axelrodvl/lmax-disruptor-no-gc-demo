@@ -24,20 +24,20 @@ public class BinanceBookDepthParser {
     }
 
     private static void setBidAsk(BinancePartialBookDepth parsed, BookDepth target, int level) {
-        long priceLevel;
-        long quantity;
+        double priceLevel;
+        double quantity;
 
         List<String> bid = parsed.getData().getBids().get(level);
-        priceLevel = Long.parseLong(bid.getFirst());
-        quantity = Long.parseLong(bid.getLast());
+        priceLevel = Double.parseDouble(bid.getFirst());
+        quantity = Double.parseDouble(bid.getLast());
 
         BidAsk targetBid = target.getBids().get(level);
         targetBid.setPriceLevel(priceLevel);
         targetBid.setQuantity(quantity);
 
         List<String> ask = parsed.getData().getAsks().get(level);
-        priceLevel = Long.parseLong(ask.getFirst());
-        quantity = Long.parseLong(ask.getLast());
+        priceLevel = Double.parseDouble(ask.getFirst());
+        quantity = Double.parseDouble(ask.getLast());
 
         BidAsk targetAsk = target.getAsks().get(level);
         targetAsk.setPriceLevel(priceLevel);

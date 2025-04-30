@@ -7,6 +7,8 @@ import com.lmax.disruptor.EventHandler;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static co.axelrod.websocket.client.logging.ConsoleConstant.SLASH;
+import static co.axelrod.websocket.client.logging.ConsoleConstant.SPACE;
 import static co.axelrod.websocket.client.parser.BinanceBookDepthParser.parseBookDepth;
 
 public class BookDepthEventHandler implements EventHandler<BookDepthEvent> {
@@ -19,15 +21,30 @@ public class BookDepthEventHandler implements EventHandler<BookDepthEvent> {
         eventCount.incrementAndGet();
 
         ByteBuffer byteBuffer = event.getByteBuffer();
-        ConsoleWriter.write(eventCount.get());
-        ConsoleWriter.write(BYTES);
-        ConsoleWriter.writeWithNewLine(byteBuffer);
+        printRawEvent(byteBuffer);
 
         parseBookDepth(byteBuffer, event.getBookDepth());
 
+        printParsedEvent(event);
+    }
+
+    private void printRawEvent(ByteBuffer byteBuffer) {
+        ConsoleWriter.write(eventCount.get());
+        ConsoleWriter.write(BYTES);
+        ConsoleWriter.writeWithNewLine(byteBuffer);
+        byteBuffer.flip();
+    }
+
+    private static void printParsedEvent(BookDepthEvent event) {
+        ConsoleWriter.writeWithNewLine(SPACE);
+        ConsoleWriter.writeWithNewLine(event.getBookDepth().getStream());
         for (int level = 0; level < Configuration.MARKET_DEPTH; level++) {
             ConsoleWriter.write(event.getBookDepth().getBids().get(level).getPriceLevel());
+            ConsoleWriter.write(SLASH);
+            ConsoleWriter.write(event.getBookDepth().getAsks().get(level).getPriceLevel());
+            ConsoleWriter.write(SPACE);
         }
+        ConsoleWriter.writeWithNewLine(SPACE);
     }
 
     public int getEventCount() {
