@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-./mvnw clean package
+./mvnw clean package -DskipTests
 
 # Note
 # --add-exports and --add-opens are required by Chronicle (https://chronicle.software/chronicle-support-java-17/)
