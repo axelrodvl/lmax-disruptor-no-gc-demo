@@ -1,6 +1,5 @@
 package co.axelrod.websocket.client.config;
 
-import java.net.URI;
 import java.util.Set;
 
 public class Configuration {
@@ -11,11 +10,8 @@ public class Configuration {
             "ethusdt"
     );
 
-    public static final URI BINANCE_WS_URI = URI.create("wss://stream.binance.com:443/stream?streams=" +
-            "btcusdt@depth" +
-            Integer.toString(MARKET_DEPTH) +
-            "/ethusdt@depth" +
-            Integer.toString(MARKET_DEPTH));
+    public static final String BINANCE_WS_URI = "wss://stream.binance.com:443/stream?streams=";
+    public static final String BINANCE_INSTRUMENT_DELIMITER = "/";
 
     public static final int WS_MAX_CONTENT_LENGTH = 8192;
     public static final int WS_MAX_FRAME_PAYLOAD_LENGTH = 65536;

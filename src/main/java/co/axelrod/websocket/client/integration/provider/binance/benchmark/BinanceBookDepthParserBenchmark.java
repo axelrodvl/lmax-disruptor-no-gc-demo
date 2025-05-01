@@ -1,4 +1,4 @@
-package co.axelrod.websocket.client.integration.provider.binance;
+package co.axelrod.websocket.client.integration.provider.binance.benchmark;
 
 import net.openhft.chronicle.bytes.Bytes;
 import org.openjdk.jmh.annotations.*;

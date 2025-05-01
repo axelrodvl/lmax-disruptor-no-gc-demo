@@ -1,6 +1,5 @@
 package co.axelrod.websocket.client;
 
-import co.axelrod.websocket.client.config.Configuration;
 import co.axelrod.websocket.client.core.disruptor.DisruptorFactory;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.core.event.BookDepthEventHandler;
@@ -17,7 +16,7 @@ public class Application {
 
         InstrumentsManager instrumentsManager = new InstrumentsManager();
 
-        try (WebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, Configuration.BINANCE_WS_URI, instrumentsManager);
+        try (WebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
              Monitoring monitoring = new Monitoring(bookDepthEventHandler, disruptor)) {
             monitoring.start();
             disruptor.start();
