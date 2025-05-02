@@ -24,11 +24,11 @@ public class BinanceWebSocketClientTest {
         disruptor.start();
         webSocketClient.start();
 
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         instrumentsManager.subscribe("bnbbtc");
 
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         webSocketClient.stop();
         disruptor.shutdown();
@@ -48,16 +48,21 @@ public class BinanceWebSocketClientTest {
         assertEquals(0, bookDepthEventHandler.getEventCount());
 
         webSocketClient.start();
-        Thread.sleep(10000);
+        Thread.sleep(5000);
         assertTrue(bookDepthEventHandler.getEventCount() > 0);
 
         webSocketClient.stop();
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         webSocketClient.start();
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         webSocketClient.stop();
         disruptor.shutdown();
+    }
+
+    @Test
+    public void reconnect() throws Exception {
+
     }
 }

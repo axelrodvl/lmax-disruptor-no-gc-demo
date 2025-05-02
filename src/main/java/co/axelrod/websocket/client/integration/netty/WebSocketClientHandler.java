@@ -32,6 +32,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof TextWebSocketFrame frame) {
             ByteBuf nettyByteBuf = frame.content().retain();
+
+            if (isControlMessageResponse(nettyByteBuf)) {
+                nettyByteBuf.release();
+                return;
+            }
+
             long sequenceNumber = ringBuffer.next();
             try {
                 BookDepthEvent event = ringBuffer.get(sequenceNumber);
@@ -50,6 +56,25 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             ConsoleWriter.writeWithNewLine("Received close frame, shutting down");
             ctx.channel().close();
         }
+    }
+
+    private boolean isControlMessageResponse(ByteBuf nettyByteBuf) {
+        int readerIndex = nettyByteBuf.readerIndex();
+        int readable = nettyByteBuf.readableBytes();
+
+        final String prefix = "{\"result\"";
+        int prefixLen = prefix.length();
+
+        if (readable < prefixLen) {
+            return false;
+        }
+
+        for (int i = 0; i < prefixLen; i++) {
+            if (nettyByteBuf.getByte(readerIndex + i) != (byte) prefix.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
