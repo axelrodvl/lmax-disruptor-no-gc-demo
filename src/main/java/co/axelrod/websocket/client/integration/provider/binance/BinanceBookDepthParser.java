@@ -22,12 +22,11 @@ public class BinanceBookDepthParser {
             BYTES.writeByte(source.get());
         }
 
-        BinancePartialBookDepth parsed = new BinancePartialBookDepth();
-        WIRE.getValueIn().object(parsed, BinancePartialBookDepth.class);
+        WIRE.getValueIn().object(PARSED, BinancePartialBookDepth.class);
 
-        target.setStream(parsed.getStream());
+        target.setStream(PARSED.getStream());
         for (int level = 0; level < Configuration.MARKET_DEPTH; level++) {
-            setBidAsk(parsed, target, level);
+            setBidAsk(PARSED, target, level);
         }
     }
 
