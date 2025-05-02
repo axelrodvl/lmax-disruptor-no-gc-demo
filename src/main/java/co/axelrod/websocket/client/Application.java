@@ -16,13 +16,11 @@ public class Application {
 
         InstrumentsManager instrumentsManager = new InstrumentsManager();
 
-        try (WebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
-             Monitoring monitoring = new Monitoring(bookDepthEventHandler, disruptor)) {
-            monitoring.start();
-            disruptor.start();
-            webSocketClient.start();
-        } finally {
-            disruptor.shutdown();
-        }
+        WebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
+        Monitoring monitoring = new Monitoring(bookDepthEventHandler, disruptor);
+
+        monitoring.start();
+        disruptor.start();
+        webSocketClient.start();
     }
 }

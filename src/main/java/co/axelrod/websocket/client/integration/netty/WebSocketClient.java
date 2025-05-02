@@ -2,6 +2,7 @@ package co.axelrod.websocket.client.integration.netty;
 
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.lifecycle.Startable;
+import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import com.lmax.disruptor.dsl.Disruptor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -19,7 +20,7 @@ public abstract class WebSocketClient implements Startable {
     private final URI uri;
     private final WebSocketChannelInitializer webSocketChannelInitializer;
 
-    WebSocketClientHandler webSocketClientHandler;
+    private WebSocketClientHandler webSocketClientHandler;
     private EventLoopGroup group;
     private Channel channel;
 
@@ -33,29 +34,37 @@ public abstract class WebSocketClient implements Startable {
         channel.writeAndFlush(frame);
     }
 
-    public void start() throws Exception {
+    public void start() {
         InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
 
         IoHandlerFactory ioHandlerFactory = NioIoHandler.newFactory();
         group = new MultiThreadIoEventLoopGroup(ioHandlerFactory);
 
-        Bootstrap bootstrap = new Bootstrap();
-        bootstrap.group(group)
+        Bootstrap bootstrap = new Bootstrap()
+                .group(group)
                 .channel(NioSocketChannel.class)
+                .remoteAddress(uri.getHost(), uri.getPort())
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .handler(webSocketChannelInitializer);
-        channel = bootstrap.connect(uri.getHost(), uri.getPort())
-                .sync()
-                .channel();
 
-        channel.closeFuture().sync();
+        bootstrap.connect()
+                .addListener((ChannelFutureListener) future -> {
+                    if (future.isSuccess()) {
+                        channel = future.channel();
+                        channel.closeFuture().addListener((ChannelFutureListener) future1 -> {
+                            ConsoleWriter.writeWithNewLine("Connection closed");
+                        });
+                    } else {
+                        ConsoleWriter.writeWithNewLine("Failed to connect:" + future.cause());
+                    }
+                });
     }
 
     @Override
     public void stop() throws Exception {
         if (channel != null) {
-            channel.writeAndFlush(new CloseWebSocketFrame()).sync();
-            channel.closeFuture().sync();
+            channel.writeAndFlush(new CloseWebSocketFrame())
+                    .addListener(ChannelFutureListener.CLOSE);
         }
         if (group != null) {
             group.shutdownGracefully().sync();
