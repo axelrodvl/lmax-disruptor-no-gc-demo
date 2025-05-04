@@ -74,7 +74,7 @@ public class BinanceWebSocketClient extends WebSocketClient implements Instrumen
     /**
      * <a href="https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams#partial-book-depth-streams">Depths based on Binance Docs (only 5, 10, and 20)</a>
      */
-    private static String formatInstrumentDepth(String instrument) {
+    public static String formatInstrumentDepth(String instrument) {
         assert Configuration.MARKET_DEPTH == 5 || Configuration.MARKET_DEPTH == 10 || Configuration.MARKET_DEPTH == 20;
         return instrument + "@depth" + Configuration.MARKET_DEPTH;
     }

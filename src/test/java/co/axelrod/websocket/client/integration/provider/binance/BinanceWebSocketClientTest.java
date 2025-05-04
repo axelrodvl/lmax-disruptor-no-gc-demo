@@ -1,68 +1,121 @@
 package co.axelrod.websocket.client.integration.provider.binance;
 
+import co.axelrod.websocket.client.config.Configuration;
 import co.axelrod.websocket.client.core.disruptor.DisruptorFactory;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.core.event.BookDepthEventHandler;
+import co.axelrod.websocket.client.core.event.TestInstrumentCounterHandler;
 import co.axelrod.websocket.client.integration.netty.WebSocketClient;
+import co.axelrod.websocket.client.integration.provider.binance.co.axelrod.websocket.client.integration.TestInstruments;
 import co.axelrod.websocket.client.subscription.InstrumentsManager;
 import com.lmax.disruptor.dsl.Disruptor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BinanceWebSocketClientTest {
-    @Test
-    public void testAddInstrument() throws Exception {
-        BookDepthEventHandler bookDepthEventHandler = new BookDepthEventHandler();
-        Disruptor<BookDepthEvent> disruptor = DisruptorFactory.getDisruptor(bookDepthEventHandler);
+    private InstrumentsManager instrumentsManager;
+    private BinanceWebSocketClient webSocketClient;
+    private Disruptor<BookDepthEvent> disruptor;
 
-        InstrumentsManager instrumentsManager = new InstrumentsManager();
+    private BookDepthEventHandler bookDepthEventHandler;
+    private TestInstrumentCounterHandler testInstrumentCounterHandler;
 
-        BinanceWebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
+    @BeforeEach
+    public void setUp() {
+        bookDepthEventHandler = new BookDepthEventHandler();
+        disruptor = DisruptorFactory.getDisruptor(bookDepthEventHandler);
+
+        testInstrumentCounterHandler = new TestInstrumentCounterHandler();
+        disruptor.after(bookDepthEventHandler).then(testInstrumentCounterHandler);
+
+        instrumentsManager = new InstrumentsManager();
+
+        webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
 
         disruptor.start();
         webSocketClient.start();
 
-        Thread.sleep(5000);
+        awaitClientStarted();
+    }
 
-        instrumentsManager.subscribe("bnbbtc");
-
-        Thread.sleep(5000);
-
+    @AfterEach
+    public void tearDown() throws Exception {
         webSocketClient.stop();
         disruptor.shutdown();
+    }
+
+    @Test
+    public void clientStarts() {
+        assertTrue(bookDepthEventHandler.getEventCount() > 0);
+    }
+
+    @Test
+    public void testAddInstrument() {
+        // given
+        String bnbBtcStream = BinanceWebSocketClient.formatInstrumentDepth(TestInstruments.BNB_BTC);
+        assertFalse(testInstrumentCounterHandler.getInstrumentOccurrence().containsKey(bnbBtcStream));
+
+        // when
+        instrumentsManager.subscribe(TestInstruments.BNB_BTC);
+
+        // then
+        await().atMost(5, SECONDS).untilAsserted(() -> {
+            assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().containsKey(bnbBtcStream));
+            assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().get(bnbBtcStream) > 0);
+        });
     }
 
     @Test
     public void testStartStopClient() throws Exception {
-        BookDepthEventHandler bookDepthEventHandler = new BookDepthEventHandler();
-        Disruptor<BookDepthEvent> disruptor = DisruptorFactory.getDisruptor(bookDepthEventHandler);
-
-        InstrumentsManager instrumentsManager = new InstrumentsManager();
-
-        WebSocketClient webSocketClient = new BinanceWebSocketClient(disruptor, instrumentsManager);
-
-        disruptor.start();
-
-        assertEquals(0, bookDepthEventHandler.getEventCount());
-
-        webSocketClient.start();
-        Thread.sleep(5000);
-        assertTrue(bookDepthEventHandler.getEventCount() > 0);
-
+        // given
         webSocketClient.stop();
-        Thread.sleep(5000);
+        await().pollInterval(1, SECONDS)
+                .atMost(3, SECONDS)
+                .until(() -> {
+                    int oldEventCountAfterStop = bookDepthEventHandler.getEventCount();
+                    Thread.sleep(1000);
+                    int newEventCountAfterStop = bookDepthEventHandler.getEventCount();
+                    return oldEventCountAfterStop == newEventCountAfterStop;
+                });
 
+        // when
+        int oldEventCountAfterStop = bookDepthEventHandler.getEventCount();
         webSocketClient.start();
-        Thread.sleep(5000);
 
-        webSocketClient.stop();
-        disruptor.shutdown();
+        // then
+        await().atMost(3, SECONDS)
+                .until(() -> bookDepthEventHandler.getEventCount() > oldEventCountAfterStop);
     }
 
     @Test
-    public void reconnect() throws Exception {
+    public void reconnect() {
+        // TODO
+    }
 
+    private void awaitClientStarted() {
+        Consumer<String> instrumentReceived = formattedInstrument ->
+                assertTrue(
+                        testInstrumentCounterHandler.getInstrumentOccurrence()
+                                .containsKey(formattedInstrument)
+                );
+
+        await().atMost(5, SECONDS).untilAsserted(() -> {
+            Configuration.DEFAULT_INSTRUMENTS.stream()
+                    .map(BinanceWebSocketClient::formatInstrumentDepth)
+                    .forEach(instrumentReceived);
+
+            assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().values().stream()
+                    .allMatch(occurrence -> occurrence > 0)
+            );
+        });
     }
 }

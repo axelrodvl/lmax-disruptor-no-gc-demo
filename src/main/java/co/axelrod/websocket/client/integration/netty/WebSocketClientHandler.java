@@ -4,6 +4,7 @@ import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import com.lmax.disruptor.RingBuffer;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
@@ -12,6 +13,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 
 import java.nio.ByteBuffer;
 
+@ChannelHandler.Sharable
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
     private final RingBuffer<BookDepthEvent> ringBuffer;
 
