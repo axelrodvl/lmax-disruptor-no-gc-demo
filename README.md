@@ -1,4 +1,4 @@
-Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC) – under 64 MB
+Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC)
 
 # Features
 - LMAX Disruptor
@@ -63,9 +63,5 @@ Used memory: 51357 KB (0 KB)
 ```
 
 # TODO
-- No GC
 - Configurable Reconnect
-- Start and stop
-- Subscription and unsubscription to a multiple sources
-- Modifying subscription list (new tickers)
-
+- 

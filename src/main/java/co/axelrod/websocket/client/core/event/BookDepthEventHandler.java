@@ -25,7 +25,9 @@ public class BookDepthEventHandler implements EventHandler<BookDepthEvent> {
 
         parseBookDepth(byteBuffer, event.getBookDepth());
 
-        printParsedEvent(event);
+        if (Configuration.PRINT_PARSED_OUTPUT) {
+            printParsedEvent(event);
+        }
     }
 
     private void printRawEvent(ByteBuffer byteBuffer) {

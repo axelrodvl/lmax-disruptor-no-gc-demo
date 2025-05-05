@@ -3,6 +3,8 @@ package co.axelrod.websocket.client.config;
 import java.util.Set;
 
 public class Configuration {
+    public static boolean PRINT_PARSED_OUTPUT = true;
+
     public static final int MARKET_DEPTH = 10;
 
     public static final Set<String> DEFAULT_INSTRUMENTS = Set.of(

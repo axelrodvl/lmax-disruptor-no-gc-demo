@@ -1,5 +1,6 @@
 package co.axelrod.websocket.client.util.monitoring;
 
+import co.axelrod.websocket.client.config.Configuration;
 import co.axelrod.websocket.client.lifecycle.Startable;
 import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
@@ -13,6 +14,8 @@ import static co.axelrod.websocket.client.util.logging.ConsoleConstant.DELIMITER
 import static co.axelrod.websocket.client.util.logging.ConsoleConstant.KB;
 
 public class Monitoring implements Startable {
+    public static final byte[] LOGGING_ALLOCATIONS_WARNING = "[WARNING] Parsed events will be printed, which will result in additional memory allocations!".getBytes();
+
     public static final byte[] DISRUPTOR_BUFFER_SIZE = "Disruptor buffer size: ".getBytes();
     public static final byte[] USED_HEAP_MEMORY = "Used heap memory: ".getBytes();
     public static final byte[] USED_DIRECT_MEMORY = "Used direct memory: ".getBytes();
@@ -35,6 +38,8 @@ public class Monitoring implements Startable {
     public void start() {
         monitoringThread = new Thread(() -> {
             try {
+                printLoggingAllocationsWarning();
+
                 while (running) {
                     printState();
                     TimeUnit.SECONDS.sleep(DELAY_IN_SECONDS);
@@ -58,6 +63,12 @@ public class Monitoring implements Startable {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    private void printLoggingAllocationsWarning() {
+        if (Configuration.PRINT_PARSED_OUTPUT) {
+            ConsoleWriter.writeWithNewLine(LOGGING_ALLOCATIONS_WARNING);
         }
     }
 

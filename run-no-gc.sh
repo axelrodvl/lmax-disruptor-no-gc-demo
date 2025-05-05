@@ -15,4 +15,4 @@ java \
   --add-opens=java.base/java.lang.reflect=ALL-UNNAMED \
   --add-opens=java.base/java.io=ALL-UNNAMED \
   --add-opens=java.base/java.util=ALL-UNNAMED \
-  -jar target/websocket-client-with-disruptor-no-gc.jar
+  -jar target/websocket-client-with-disruptor-no-gc.jar --print-parsed-output=false
