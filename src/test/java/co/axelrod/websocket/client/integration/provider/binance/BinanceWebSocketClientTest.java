@@ -5,17 +5,13 @@ import co.axelrod.websocket.client.core.disruptor.DisruptorFactory;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.core.event.BookDepthEventHandler;
 import co.axelrod.websocket.client.core.event.TestInstrumentCounterHandler;
-import co.axelrod.websocket.client.integration.netty.WebSocketClient;
-import co.axelrod.websocket.client.integration.provider.binance.co.axelrod.websocket.client.integration.TestInstruments;
 import co.axelrod.websocket.client.subscription.InstrumentsManager;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
