@@ -38,10 +38,19 @@ public class BookDepthEventHandler implements EventHandler<BookDepthEvent> {
     private static void printParsedEvent(BookDepthEvent event) {
         ConsoleWriter.writeWithNewLine(SPACE);
         ConsoleWriter.writeWithNewLine(event.getBookDepth().getStream());
+
         for (int level = 0; level < Configuration.MARKET_DEPTH; level++) {
             ConsoleWriter.write(event.getBookDepth().getBids().get(level).getPriceLevel());
             ConsoleWriter.write(SLASH);
+            ConsoleWriter.write(event.getBookDepth().getBids().get(level).getQuantity());
+            ConsoleWriter.write(SPACE);
+        }
+        ConsoleWriter.writeWithNewLine(SPACE);
+
+        for (int level = 0; level < Configuration.MARKET_DEPTH; level++) {
             ConsoleWriter.write(event.getBookDepth().getAsks().get(level).getPriceLevel());
+            ConsoleWriter.write(SLASH);
+            ConsoleWriter.write(event.getBookDepth().getAsks().get(level).getQuantity());
             ConsoleWriter.write(SPACE);
         }
         ConsoleWriter.writeWithNewLine(SPACE);
