@@ -53,17 +53,17 @@ Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC)
 # Output sample
 ```
 ---------------------------------------------------
-Handled events: 25532
+Handled events: 1416
 ---------------------------------------------------
 Disruptor buffer size: 16
 ---------------------------------------------------
 Used heap memory: 0 KB
 Used direct memory: 4096 KB
 ---------------------------------------------------
-Allocated memory (totalMemory): 262144 KB
-Maximum memory (maxMemory): 262144 KB
-Free memory: 210786 KB (0 KB)
-Used memory: 51357 KB (0 KB)
+Allocated memory (totalMemory): 65536 KB
+Maximum memory (maxMemory): 65536 KB
+Free memory: 9609 KB (0 KB)
+Used memory: 55926 KB (0 KB)
 ---------------------------------------------------
 ```
 
