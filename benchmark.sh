@@ -5,7 +5,7 @@
 # --add-exports and --add-opens are required by Chronicle (https://chronicle.software/chronicle-support-java-17/)
 java \
   -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:+AlwaysPreTouch \
-  -Xmx256m \
+  -Xmx1024m \
   --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED \
   --add-exports=java.base/sun.nio.ch=ALL-UNNAMED \
   --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED \
