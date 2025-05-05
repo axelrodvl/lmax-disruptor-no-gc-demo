@@ -1,5 +1,10 @@
 Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC)
 
+# Used API
+- Subscribing: https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams#subscribe-to-a-stream
+- Unsubscribing: https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams#unsubscribe-to-a-stream
+- Stream: https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams#partial-book-depth-streams
+
 # Features
 - LMAX Disruptor
 - Netty WebSocket Client
@@ -10,7 +15,7 @@ Example of a WebSocket client using LMAX Disruptor with No GC (EpsilonGC)
 - Thread-1
 - main
 
-# Memory Allocation Events
+# Memory Allocation Events (TODO)
 - 5.74 MB [io.netty.internal.tcnative] NioIoHandler -> SSLTask -> CertificateVerifierTask
 
 # Output sample
@@ -64,4 +69,3 @@ Used memory: 51357 KB (0 KB)
 
 # TODO
 - Configurable Reconnect
-- 
