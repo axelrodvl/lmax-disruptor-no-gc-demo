@@ -37,14 +37,8 @@ public class BinanceWebSocketClient extends WebSocketClient implements Instrumen
      *   "id": 1
      * }
      */
-    public void subscribe() {
-        Set<String> newInstruments = new HashSet<>(instrumentsManager.getInstruments());
-        newInstruments.removeAll(subscribedInstruments);
-
-        String params = newInstruments.stream()
-                .map(BinanceWebSocketClient::formatInstrumentDepth)
-                .map(s -> "\"" + s + "\"")
-                .collect(Collectors.joining(","));
+    public void subscribe(Set<String> instruments) {
+        String params = formatInstrumentsForSubscription(instruments);
 
         WebSocketFrame webSocketFrame = new TextWebSocketFrame("""
                 {
@@ -53,14 +47,60 @@ public class BinanceWebSocketClient extends WebSocketClient implements Instrumen
                   "id": %d
                 }
                 """.formatted(params, requestCount++));
-        send(webSocketFrame);
 
-        subscribedInstruments = new HashSet<>(instrumentsManager.getInstruments());
+        send(webSocketFrame);
+    }
+
+    /**
+     * {
+     *   "method": "UNSUBSCRIBE",
+     *   "params": [
+     *     "btcusdt@aggTrade",
+     *     "btcusdt@depth"
+     *   ],
+     *   "id": 1
+     * }
+     */
+    public void unsubscribe(Set<String> instruments) {
+        String params = formatInstrumentsForSubscription(instruments);
+
+        WebSocketFrame webSocketFrame = new TextWebSocketFrame("""
+                {
+                  "method": "UNSUBSCRIBE",
+                  "params": [%s],
+                  "id": %d
+                }
+                """.formatted(params, requestCount++));
+
+        send(webSocketFrame);
+    }
+
+    private static String formatInstrumentsForSubscription(Set<String> instruments) {
+        return instruments.stream()
+                .map(BinanceWebSocketClient::formatInstrumentDepth)
+                .map(s -> "\"" + s + "\"")
+                .collect(Collectors.joining(","));
     }
 
     @Override
-    public void onConfigurationChanged() {
-        subscribe();
+    public void onConfigurationChange() {
+        if (instrumentsManager.getInstruments().equals(subscribedInstruments)) {
+            return;
+        }
+
+        Set<String> addedInstruments = new HashSet<>(instrumentsManager.getInstruments());
+        addedInstruments.removeAll(subscribedInstruments);
+        if (!addedInstruments.isEmpty()) {
+            subscribe(addedInstruments);
+        }
+
+        Set<String> removedInstruments = new HashSet<>(subscribedInstruments);
+        removedInstruments.removeAll(instrumentsManager.getInstruments());
+        if (!removedInstruments.isEmpty()) {
+            unsubscribe(removedInstruments);
+        }
+
+        subscribedInstruments = new HashSet<>(instrumentsManager.getInstruments());
     }
 
     private static URI buildURI(InstrumentsManager instrumentsManager) {

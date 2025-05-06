@@ -27,13 +27,23 @@ public class InstrumentsManager {
         return instruments;
     }
 
-    public void subscribe(String instrument) {
-        instruments.add(instrument);
-        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChanged);
+    public void subscribe(Set<String> instrumentsToSubscribe) {
+        instruments.addAll(instrumentsToSubscribe);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChange);
     }
 
-    public void unsubscribe(String instrument) {
-        instruments.remove(instrument);
-        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChanged);
+    public void subscribe(String instrumentToSubscribe) {
+        instruments.add(instrumentToSubscribe);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChange);
+    }
+
+    public void unsubscribe(Set<String> instrumentToUnsubscribe) {
+        instruments.removeAll(instrumentToUnsubscribe);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChange);
+    }
+
+    public void unsubscribe(String instrumentToUnsubscribe) {
+        instruments.remove(instrumentToUnsubscribe);
+        listeners.forEach(InstrumentsConfigurationListener::onConfigurationChange);
     }
 }

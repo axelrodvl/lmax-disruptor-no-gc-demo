@@ -65,8 +65,27 @@ public class BinanceWebSocketClientTest {
 
         // then
         await().atMost(5, SECONDS).untilAsserted(() -> {
+            assertTrue(instrumentsManager.getInstruments().contains(TestInstruments.BNB_BTC));
             assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().containsKey(bnbBtcStream));
             assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().get(bnbBtcStream) > 0);
+        });
+    }
+
+    @Test
+    public void testRemoveInstrument() {
+        // given
+        String btcUsdtStream = BinanceWebSocketClient.formatInstrumentDepth(TestInstruments.BTC_USDT);
+        assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().containsKey(btcUsdtStream));
+
+        // when
+        instrumentsManager.unsubscribe(TestInstruments.BTC_USDT);
+        int occurrence = testInstrumentCounterHandler.getInstrumentOccurrence().get(btcUsdtStream);
+
+        // then
+        await().atMost(5, SECONDS).untilAsserted(() -> {
+            assertFalse(instrumentsManager.getInstruments().contains(TestInstruments.BTC_USDT));
+            assertTrue(testInstrumentCounterHandler.getInstrumentOccurrence().containsKey(btcUsdtStream));
+            assertEquals(occurrence, testInstrumentCounterHandler.getInstrumentOccurrence().get(btcUsdtStream));
         });
     }
 
