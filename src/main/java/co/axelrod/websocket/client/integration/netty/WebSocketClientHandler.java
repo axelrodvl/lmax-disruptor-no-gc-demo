@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 
@@ -68,7 +69,13 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                 ringBuffer.publish(sequenceNumber);
                 nettyByteBuf.release();
             }
-        } else if (msg instanceof CloseWebSocketFrame) {
+        }
+
+        if (msg instanceof PongWebSocketFrame) {
+            ConsoleWriter.writeWithNewLine("Received pong from server");
+        }
+
+        if (msg instanceof CloseWebSocketFrame) {
             ConsoleWriter.writeWithNewLine("Received close frame, shutting down");
             ctx.channel().close();
         }

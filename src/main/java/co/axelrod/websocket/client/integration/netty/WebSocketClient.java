@@ -43,6 +43,7 @@ public abstract class WebSocketClient implements Startable {
                 .channel(NioSocketChannel.class)
                 .remoteAddress(uri.getHost(), uri.getPort())
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(getHandlers());
     }
 
