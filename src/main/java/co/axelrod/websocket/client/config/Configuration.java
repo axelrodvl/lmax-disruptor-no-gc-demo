@@ -17,4 +17,7 @@ public class Configuration {
 
     public static final int WS_MAX_CONTENT_LENGTH = 8192;
     public static final int WS_MAX_FRAME_PAYLOAD_LENGTH = 65536;
+
+    public static final int RECONNECT_DELAY_IN_SECONDS = 5;
+    public static final int READ_TIMEOUT_IN_SECONDS = 10;
 }

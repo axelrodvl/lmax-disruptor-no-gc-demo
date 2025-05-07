@@ -1,5 +1,6 @@
 package co.axelrod.websocket.client.integration.netty;
 
+import co.axelrod.websocket.client.config.Configuration;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.lifecycle.Startable;
 import co.axelrod.websocket.client.util.logging.ConsoleWriter;
@@ -8,9 +9,11 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
@@ -23,11 +26,36 @@ public abstract class WebSocketClient implements Startable {
     private WebSocketClientHandler webSocketClientHandler;
     private EventLoopGroup group;
     private Channel channel;
+    private Bootstrap bootstrap;
 
     public WebSocketClient(Disruptor<BookDepthEvent> disruptor, URI uri) {
         this.uri = uri;
-        this.webSocketClientHandler = new WebSocketClientHandler(disruptor.getRingBuffer());
+        this.webSocketClientHandler = new WebSocketClientHandler(this, disruptor.getRingBuffer());
         this.webSocketChannelInitializer = new WebSocketChannelInitializer(uri, webSocketClientHandler);
+
+        InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
+
+        IoHandlerFactory ioHandlerFactory = NioIoHandler.newFactory();
+        group = new MultiThreadIoEventLoopGroup(ioHandlerFactory);
+
+        bootstrap = new Bootstrap()
+                .group(group)
+                .channel(NioSocketChannel.class)
+                .remoteAddress(uri.getHost(), uri.getPort())
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .handler(getHandlers());
+    }
+
+    private ChannelInitializer<SocketChannel> getHandlers() {
+        return new ChannelInitializer<>() {
+            @Override
+            protected void initChannel(SocketChannel ch) {
+                ch.pipeline().addLast(
+                        new IdleStateHandler(Configuration.READ_TIMEOUT_IN_SECONDS, 0, 0),
+                        webSocketChannelInitializer
+                );
+            }
+        };
     }
 
     public void send(WebSocketFrame frame) {
@@ -35,18 +63,6 @@ public abstract class WebSocketClient implements Startable {
     }
 
     public void start() {
-        InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
-
-        IoHandlerFactory ioHandlerFactory = NioIoHandler.newFactory();
-        group = new MultiThreadIoEventLoopGroup(ioHandlerFactory);
-
-        Bootstrap bootstrap = new Bootstrap()
-                .group(group)
-                .channel(NioSocketChannel.class)
-                .remoteAddress(uri.getHost(), uri.getPort())
-                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .handler(webSocketChannelInitializer);
-
         bootstrap.connect()
                 .addListener((ChannelFutureListener) future -> {
                     if (future.isSuccess()) {
@@ -69,5 +85,9 @@ public abstract class WebSocketClient implements Startable {
         if (group != null) {
             group.shutdownGracefully().sync();
         }
+    }
+
+    public URI getUri() {
+        return uri;
     }
 }

@@ -1,5 +1,6 @@
 package co.axelrod.websocket.client.integration.netty;
 
+import co.axelrod.websocket.client.config.Configuration;
 import co.axelrod.websocket.client.core.event.BookDepthEvent;
 import co.axelrod.websocket.client.util.logging.ConsoleWriter;
 import com.lmax.disruptor.RingBuffer;
@@ -12,13 +13,26 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
 
 @ChannelHandler.Sharable
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
+    private final WebSocketClient webSocketClient;
     private final RingBuffer<BookDepthEvent> ringBuffer;
 
-    public WebSocketClientHandler(RingBuffer<BookDepthEvent> ringBuffer) {
+    long startTime = -1;
+
+    public WebSocketClientHandler(WebSocketClient webSocketClient, RingBuffer<BookDepthEvent> ringBuffer) {
+        this.webSocketClient = webSocketClient;
         this.ringBuffer = ringBuffer;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        if (startTime < 0) {
+            startTime = System.currentTimeMillis();
+        }
+        ConsoleWriter.writeWithNewLine("Connected to: " + ctx.channel().remoteAddress());
     }
 
     @Override
@@ -77,6 +91,21 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             }
         }
         return true;
+    }
+
+    @Override
+    public void channelInactive(final ChannelHandlerContext ctx) {
+        ConsoleWriter.writeWithNewLine("Disconnected from: " + ctx.channel().remoteAddress());
+    }
+
+    @Override
+    public void channelUnregistered(final ChannelHandlerContext ctx) {
+        ConsoleWriter.writeWithNewLine("Sleeping for: " + Configuration.RECONNECT_DELAY_IN_SECONDS + " s");
+
+        ctx.channel().eventLoop().schedule(() -> {
+            ConsoleWriter.writeWithNewLine("Reconnecting to " + webSocketClient.getUri());
+            webSocketClient.start();
+        }, Configuration.RECONNECT_DELAY_IN_SECONDS, TimeUnit.SECONDS);
     }
 
     @Override
